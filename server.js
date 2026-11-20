@@ -11,7 +11,6 @@ const POLL_MS = Math.max(60_000, Number(process.env.COC_POLL_MS || 300_000));
 const root = __dirname;
 const dataDir = process.env.DATA_DIR || path.join(root, 'data');
 const snapshotFile = path.join(dataDir, 'clan-snapshot.json');
-const donationsFile = path.join(dataDir, 'donations.json');
 const historyFile = path.join(dataDir, 'tracker-history.json');
 let snapshot = null;
 let lastError = null;
@@ -25,7 +24,6 @@ function saveJson(file, value) {
   fs.writeFileSync(file, JSON.stringify(value, null, 2));
 }
 snapshot = loadJson(snapshotFile, null);
-let donations = loadJson(donationsFile, []);
 let history = loadJson(historyFile, {
   trackingStartedAt: null,
   donationBaseline: null,
@@ -190,23 +188,11 @@ const server = http.createServer(async (req, res) => {
       ? { ...snapshot, lastError }
       : { error: lastError || (TOKEN ? 'Waiting for the first Clash API refresh.' : 'Missing COC_API_TOKEN.') });
   }
-  if (url.pathname === '/api/donations' && req.method === 'GET') return send(res, 200, donations);
-  if (url.pathname === '/api/donations' && req.method === 'POST') {
-    let raw = '';
-    req.on('data', chunk => { raw += chunk; if (raw.length > 10_000) req.destroy(); });
-    req.on('end', () => {
-      try {
-        const entry = JSON.parse(raw);
-        if (!entry.name || !entry.troop || !Number.isInteger(Number(entry.qty)) || Number(entry.qty) < 1)
-          return send(res, 400, { error: 'Player, troop, and a positive quantity are required.' });
-        donations.unshift({ name: String(entry.name).slice(0, 60), troop: String(entry.troop).slice(0, 80), qty: Number(entry.qty), when: new Date().toISOString() });
-        donations = donations.slice(0, 1000);
-        saveJson(donationsFile, donations);
-        return send(res, 201, donations[0]);
-      } catch { return send(res, 400, { error: 'Invalid donation entry.' }); }
-    });
-    return;
-  }
+    if (url.pathname === '/api/donations') {
+        return send(res, 410, {
+            error: 'Manual donation logging is no longer supported.'
+        });
+    }
   const relative = decodeURIComponent(url.pathname === '/' ? 'index.html' : url.pathname.slice(1));
   const resolved = path.resolve(root, relative);
   if (!resolved.startsWith(root + path.sep)) { res.writeHead(403); return res.end('Forbidden'); }
