@@ -46,6 +46,7 @@ before(async () => {
 
     for (const file of [
         'server.js',
+        'database.js',
         'index.html',
         'app.js',
         'styles.css',
@@ -183,7 +184,10 @@ test('Rejected donations do not change cached statistics', async () => {
 
 test('Backend and repository files are blocked', async () => {
     for (const route of [
-        '/server.js', '/package.json', '/.git/config'
+        '/server.js',
+        '/database.js',
+        '/package.json',
+        '/.git/config'
     ]) {
         const response = await fetch(`${baseUrl}${route}`);
 
@@ -194,7 +198,9 @@ test('Backend and repository files are blocked', async () => {
 test('Stored data files are blocked', async () => {
     for (const route of [
         '/data/clan-snapshot.json',
-        '/data/tracker-history.json'
+        '/data/tracker-history.json',
+        '/data/clash-ledger.sqlite',
+        '/data/clash-ledger.sqlite-journal'
     ]) {
         const response = await fetch(`${baseUrl}${route}`);
 

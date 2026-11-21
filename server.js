@@ -3,6 +3,7 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
+const { openStore } = require('./database');
 
 const PORT = Number(process.env.PORT || 3000);
 const TOKEN = process.env.COC_API_TOKEN;
@@ -10,29 +11,12 @@ const CLAN_TAG = process.env.COC_CLAN_TAG || '#2PYYVR0PP';
 const POLL_MS = Math.max(60_000, Number(process.env.COC_POLL_MS || 300_000));
 const root = __dirname;
 const dataDir = process.env.DATA_DIR || path.join(root, 'data');
-const snapshotFile = path.join(dataDir, 'clan-snapshot.json');
-const historyFile = path.join(dataDir, 'tracker-history.json');
-let snapshot = null;
+const store = openStore(dataDir);
+
+let { snapshot, history } = store.load();
+
 let lastError = null;
 let polling = false;
-
-function loadJson(file, fallback) {
-  try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return fallback; }
-}
-function saveJson(file, value) {
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, JSON.stringify(value, null, 2));
-}
-snapshot = loadJson(snapshotFile, null);
-let history = loadJson(historyFile, {
-  trackingStartedAt: null,
-  donationBaseline: null,
-  lastDonationTotals: {},
-  donationDeltas: [],
-  wars: {},
-  cwlWars: {},
-  warLogBackfill: { year: null, cursor: null, complete: false },
-});
 
 function cocTimestamp(value) {
   if (!value) return null;
@@ -126,10 +110,15 @@ async function coc(endpoint) {
 }
 
 async function refresh() {
-  if (polling || !TOKEN) return;
-  polling = true;
-  const tag = encodeURIComponent(CLAN_TAG);
-  try {
+    if (polling || !TOKEN) return;
+
+    polling = true;
+
+    const previousHistory = history;
+    const tag = encodeURIComponent(CLAN_TAG);
+
+    try {
+        history = structuredClone(previousHistory);
     const [clan, war, league] = await Promise.allSettled([
       coc(`/clans/${tag}`), coc(`/clans/${tag}/currentwar`), coc(`/clans/${tag}/currentwar/leaguegroup`),
     ]);
@@ -148,7 +137,6 @@ async function refresh() {
     if (war.status === 'fulfilled' && war.value?.state !== 'notInWar') recordWar(history.wars, war.value, 'currentWar');
     const cwlWars = cwlResults.filter(result => result.status === 'fulfilled').map(result => result.value);
     for (const cwlWar of cwlWars) recordWar(history.cwlWars, cwlWar, 'cwl', leagueGroup?.season);
-    saveJson(historyFile, history);
     const fresh = {
       clan: clan.value,
       currentWar: war.status === 'fulfilled' ? war.value : null,
@@ -167,14 +155,21 @@ async function refresh() {
         cwlWars: Object.values(history.cwlWars),
       },
     };
-    snapshot = fresh;
-    lastError = null;
-    saveJson(snapshotFile, snapshot);
+        store.save(history, fresh);
+
+        snapshot = fresh;
+        lastError = null;
     console.log(`Clan snapshot refreshed at ${fresh.updatedAt}`);
-  } catch (error) {
-    lastError = error.message;
-    console.error(`Clash API refresh failed: ${lastError}`);
-  } finally { polling = false; }
+    } catch (error) {
+        history = previousHistory;
+
+        lastError = error.message;
+
+        console.error(`Clash API refresh failed: ${lastError}`);
+
+    } finally {
+        polling = false;
+    }
 }
 
 function send(res, status, value) {
