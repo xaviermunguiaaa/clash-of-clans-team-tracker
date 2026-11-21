@@ -1621,3 +1621,92 @@
                 scroll-behavior: auto !important;
             }
         }
+
+/* Individual player profiles */
+
+.player-profile-link {
+    background: none;
+    border: 0;
+    padding: 2px;
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-align: left;
+}
+
+.player-profile-dialog {
+    width: min(720px, calc(100% - 24px));
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--panel);
+    color: var(--text);
+}
+
+    .player-profile-dialog::backdrop {
+        background: rgba(0, 0, 0, 0.72);
+    }
+
+.player-profile-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+    .player-profile-heading h2 {
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+.profile-note {
+    color: var(--muted);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.profile-close {
+    background: var(--panel2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+.player-profile-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+    .player-profile-stats > div {
+        padding: 12px;
+        background: var(--panel2);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+    }
+
+    .player-profile-stats strong {
+        display: block;
+        font-size: 22px;
+        overflow-wrap: anywhere;
+    }
+
+    .player-profile-stats span {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+.player-profile-link:focus-visible,
+.profile-close:focus-visible {
+    outline: 2px solid var(--accent2);
+    outline-offset: 2px;
+}
+
+@media (min-width: 600px) {
+    .player-profile-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
