@@ -90,7 +90,7 @@
             gap: 5px
         }
 
-            .nav button {
+            .nav a {
                 border: 0;
                 background: none;
                 text-align: left;
@@ -103,12 +103,12 @@
                 font-weight: 600
             }
 
-                .nav button:hover, .nav button.active {
+                .nav a:hover, .nav a.active {
                     background: #252b3b;
                     color: var(--text)
                 }
 
-                .nav button.active {
+                .nav a.active {
                     box-shadow: inset 2px 0 var(--accent)
                 }
 
@@ -882,7 +882,7 @@
                 flex-shrink: 0
             }
 
-            .nav button {
+            .nav a {
                 justify-content: center;
                 padding: 12px 5px
             }
@@ -1053,14 +1053,14 @@
             gap: 6px
         }
 
-            .nav button {
+            .nav a {
                 padding: 12px 12px;
                 border: 1px solid transparent;
                 border-radius: 10px;
                 color: #a9bad0
             }
 
-                .nav button.active {
+                .nav a.active {
                     background: #1b2b42;
                     border-color: #2b4563;
                     box-shadow: inset 3px 0 var(--accent);
@@ -1278,7 +1278,7 @@
             gap: 8px;
         }
 
-        .nav button:focus-visible, .select:focus-visible, .filter:focus-visible,
+        .nav a:focus-visible, .select:focus-visible, .filter:focus-visible,
         .search:focus-visible, .custom-dates input:focus-visible {
             outline: 2px solid var(--accent2);
             outline-offset: 2px;
@@ -1350,7 +1350,7 @@
                 gap: 6px;
             }
 
-                .nav button {
+                .nav a {
                     justify-content: center;
                     text-align: center;
                     gap: 6px;
@@ -1363,7 +1363,7 @@
                 display: inline;
             }
 
-            .nav button.active {
+            .nav a.active {
                 box-shadow: inset 0 -2px var(--accent);
             }
 
@@ -1391,7 +1391,7 @@
                 gap: 3px;
             }
 
-                .nav button {
+                .nav a {
                     flex-direction: column;
                     gap: 3px;
                     padding: 6px 2px;
@@ -1829,17 +1829,17 @@ body {
 
 /* Navigation */
 
-.nav button {
+.nav a {
     color: #e4d8c1;
     border-radius: 4px;
 }
 
-    .nav button:hover {
+    .nav a:hover {
         background: #344052;
         color: var(--cream);
     }
 
-    .nav button.active {
+    .nav a.active {
         background: var(--chivas-red);
         color: var(--cream);
         border-color: #d2747e;
@@ -2159,7 +2159,7 @@ body {
         border-bottom: 0;
     }
 
-    .nav button.active {
+    .nav a.active {
         box-shadow: inset 0 -3px var(--gold);
     }
 }
@@ -2175,5 +2175,34 @@ body {
 
     .clanscore strong {
         font-size: 26px;
+    }
+}
+
+/* Dedicated dashboard pages */
+
+.nav a {
+    text-decoration: none;
+}
+
+main section[data-page][hidden] {
+    display: none !important;
+}
+
+/* Dedicated pages use the full content width. */
+
+.main .content-grid {
+    display: block;
+}
+
+/* Keep overview details side by side on desktop. */
+
+.main[data-route="overview"] .content-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+}
+
+@media (max-width: 1050px) {
+    .main[data-route="overview"] .content-grid {
+        grid-template-columns: minmax(0, 1fr);
     }
 }

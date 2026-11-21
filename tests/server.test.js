@@ -49,6 +49,7 @@ before(async () => {
         'database.js',
         'index.html',
         'app.js',
+        'router.js',
         'styles.css',
         'package.json'
     ]) {
@@ -234,4 +235,27 @@ test('Dashboard links to an accessible stylesheet', async () => {
     assert.equal(response.status, 200);
     assert.match(response.headers.get('content-type'), /text\/css/);
     assert.match(await response.text(), /@media/);
+});
+
+test('Dashboard routes can be opened directly', async () => {
+    for (const route of [
+        '/wars',
+        '/cwl',
+        '/donations',
+        '/members'
+    ]) {
+        const response = await fetch(`${baseUrl}${route}`);
+
+        assert.equal(response.status, 200);
+
+        assert.match(
+            response.headers.get('content-type'),
+            /text\/html/
+        );
+
+        assert.match(
+            await response.text(),
+            /src="\/router.js"/
+        );
+    }
 });

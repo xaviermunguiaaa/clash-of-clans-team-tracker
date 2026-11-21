@@ -192,6 +192,11 @@ const server = http.createServer(async (req, res) => {
     const publicFiles = new Map([
         ['/', 'index.html'],
         ['/index.html', 'index.html'],
+        ['/wars', 'index.html'],
+        ['/cwl', 'index.html'],
+        ['/donations', 'index.html'],
+        ['/members', 'index.html'],
+        ['/router.js', 'router.js'],
         ['/app.js', 'app.js'],
         ['/styles.css', 'styles.css'],
     ]);
