@@ -40,7 +40,27 @@
             <div class="page-note" id="footerNote">Clash Ledger &middot; Connected to clan #2PYYVR0PP</div>
         </main>
     </div>
-    <script src="/app.js?v=20261118-7"></script>
+    <dialog id="playerProfileDialog"
+            class="player-profile-dialog"
+            aria-labelledby="playerProfileTitle">
+
+        <div class="player-profile-heading">
+            <div>
+                <h2 id="playerProfileTitle">Player profile</h2>
+                <p id="playerProfileMeta" class="profile-note"></p>
+            </div>
+
+            <form method="dialog">
+                <button class="profile-close" autofocus>
+                    Close
+                </button>
+            </form>
+        </div>
+
+        <div id="playerProfileContent"></div>
+    </dialog>
+
+    <script src="/app.js?v=20261121-8"></script>
 </body>
 </html>
 

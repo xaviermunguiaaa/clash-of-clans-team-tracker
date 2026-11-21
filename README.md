@@ -2,6 +2,21 @@
 
 Configured for clan **#2PYYVR0PP**. The Node service polls the official Clash of Clans API every five minutes, saves war, CWL, and donation history on disk, and the dashboard checks for updates every minute. Donation entries are stored on the server too. The dashboard uses the blue palette, highlights members who attacked in the most recent war in green, and only shows API or recorded values; it does not invent performance figures.
 
+## Individual player profiles
+
+Click a player's name in the member roster or leaderboard to view
+their individual profile, including:
+
+- Player tag, clan role, and Town Hall level.
+- Donations given and received.
+- Daily donation history.
+- Individual war stars and attacks.
+- Regular war and Clan War League history.
+
+Player statistics respect the dashboard's selected date range.
+All statistics come from official API data and previously recorded
+history. Players cannot manually modify their statistics.
+
 ## Requirements before live updates work
 
 - A host that stays online and has a **static public outbound IPv4 address**. Supercell binds API keys to an allowed IP, so a typical serverless host with changing egress IPs will not work reliably.
