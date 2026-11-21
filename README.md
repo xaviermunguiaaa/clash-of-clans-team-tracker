@@ -39,6 +39,26 @@ the database.
 
 Node.js 24 or newer is required.
 
+## CSV exports
+
+Choose a dashboard date range, select an export type, and
+click **Download CSV**.
+
+Available exports:
+
+- Current clan members and their performance statistics.
+- Historical donation totals.
+- Regular war and Clan War League history.
+
+Dates use UTC and unavailable war statistics are left blank.
+
+Donation exports identify whether totals include the starting
+API balance or use current API data when history is unavailable.
+
+CSV files are generated in the browser and do not modify
+stored records. They are compatible with Excel and other
+spreadsheet applications.
+
 ## Requirements before live updates work
 
 - A host that stays online and has a **static public outbound IPv4 address**. Supercell binds API keys to an allowed IP, so a typical serverless host with changing egress IPs will not work reliably.
