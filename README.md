@@ -17,10 +17,32 @@ Player statistics respect the dashboard's selected date range.
 All statistics come from official API data and previously recorded
 history. Players cannot manually modify their statistics.
 
+## SQLite database storage
+
+Historical donation records, regular wars, CWL records,
+and cached clan snapshots are stored in a SQLite database
+located at `data/clash-ledger.sqlite`.
+
+On first startup, the server automatically imports existing
+JSON history files into SQLite. The original files are
+retained and are not overwritten or deleted.
+
+The database uses transactions to prevent partially saved
+updates and prepared statements for database operations.
+
+All statistics continue to come from the official Clash
+of Clans API. Manual donation submissions remain disabled.
+
+Keep the data directory on persistent storage, maintain
+regular backups, and run only one server instance against
+the database.
+
+Node.js 24 or newer is required.
+
 ## Requirements before live updates work
 
 - A host that stays online and has a **static public outbound IPv4 address**. Supercell binds API keys to an allowed IP, so a typical serverless host with changing egress IPs will not work reliably.
-- Node.js 18 or newer.
+- Node.js 24 or newer.
 - A Clash of Clans API key from [the official developer portal](https://developer.clashofclans.com/), with the host's static outbound IP on its allowed IP list.
 
 The API key is a server secret. Never add it to `index.html`, commit it, or share it in chat.
@@ -45,7 +67,7 @@ Then open `http://localhost:3000`. Set `COC_CLAN_TAG` to change the clan, `COC_P
 ## Keep it running on a Linux VPS
 
 1. Choose a small VPS with a static outbound IP. Add that IP to the API key's allowed IP list.
-2. Copy this `outputs` folder to the server and install Node.js 18 or newer.
+2. Copy this `outputs` folder to the server and install Node.js 24 or newer.
 3. Create a service account and a persistent writable data directory. Set `COC_API_TOKEN` in the service manager's secret/environment configuration; do not store it in the web root.
 4. Run `node server.js` under a process manager such as systemd, configure automatic restart on failure and startup at boot, and put a TLS reverse proxy in front of port 3000 before exposing it to the public internet.
 5. Keep the data directory on persistent storage. It contains the current clan snapshot and donation log.
