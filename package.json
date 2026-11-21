@@ -5,7 +5,7 @@
   "description": "Clan dashboard with a secure Clash of Clans API proxy",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test tests/server.test.js"
+    "test": "node --test"
   },
   "engines": {
     "node": ">=18"
