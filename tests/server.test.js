@@ -45,7 +45,11 @@ before(async () => {
     const root = path.join(__dirname, '..');
 
     for (const file of [
-        'server.js', 'index.html', 'app.js', 'package.json'
+        'server.js',
+        'index.html',
+        'app.js',
+        'styles.css',
+        'package.json'
     ]) {
         fs.copyFileSync(
             path.join(root, file),
@@ -211,4 +215,17 @@ test('Unknown routes return 404', async () => {
     const response = await fetch(`${baseUrl}/does-not-exist`);
 
     assert.equal(response.status, 404);
+});
+
+test('Dashboard links to an accessible stylesheet', async () => {
+    const page = await fetch(`${baseUrl}/`);
+
+    assert.equal(page.status, 200);
+    assert.match(await page.text(), /href="\/styles\.css"/);
+
+    const response = await fetch(`${baseUrl}/styles.css`);
+
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type'), /text\/css/);
+    assert.match(await response.text(), /@media/);
 });

@@ -198,6 +198,7 @@ const server = http.createServer(async (req, res) => {
         ['/', 'index.html'],
         ['/index.html', 'index.html'],
         ['/app.js', 'app.js'],
+        ['/styles.css', 'styles.css'],
     ]);
 
     const file = publicFiles.get(url.pathname);
@@ -220,7 +221,9 @@ const server = http.createServer(async (req, res) => {
 
         const type = file.endsWith('.html')
             ? 'text/html; charset=utf-8'
-            : 'text/javascript; charset=utf-8';
+            : file.endsWith('.css')
+                ? 'text/css; charset=utf-8'
+                : 'text/javascript; charset=utf-8';
 
         res.writeHead(200, {
             'Content-Type': type,
