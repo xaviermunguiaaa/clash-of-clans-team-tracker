@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "description": "Clan dashboard with a secure Clash of Clans API proxy",
-  "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=18" }
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/server.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
