@@ -756,7 +756,6 @@ document.getElementById('dateFrom').addEventListener('change', renderAll);
 document.getElementById('dateTo').addEventListener('change', renderAll);
 const warType = document.getElementById('warType');
 if (warType) warType.addEventListener('change', renderActivity);
-document.querySelectorAll('.nav button').forEach(button => button.onclick = () => { document.getElementById(button.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'start' }); document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b === button)); document.getElementById('crumb').textContent = button.innerText.trim() });
 renderAll();
 refreshClan();
 setInterval(refreshClan, 60_000);

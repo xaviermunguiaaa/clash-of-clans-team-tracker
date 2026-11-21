@@ -3,33 +3,175 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+
     <title>Clash Ledger &mdash; Clan dashboard</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
 </head>
+
 <body>
     <div class="shell">
+
+        <!-- Sidebar navigation -->
+
         <aside class="sidebar">
-            <div class="brand"><div class="brandmark"><img id="brandBadge" alt="Unbearables clan badge" hidden><span class="brand-fallback">U</span></div><div class="brand-copy"><span class="brand-label" id="brandClanName">UNBEARABLES</span><span class="brand-meta" id="brandClanTag">CLASH LEDGER &middot; #2PYYVR0PP</span></div></div><div class="eyebrow">CLAN WORKSPACE</div><nav class="nav">
-                <button class="active" data-target="overview"><span class="ico">&#x25C6;</span><span class="nav-label">Overview</span></button><button data-target="warPanel"><span class="ico">&#x2694;</span><span class="nav-label">Clan war</span></button><button data-target="cwlPanel"><span class="ico">&#x2726;</span><span class="nav-label">CWL</span></button><button data-target="donationAnalytics">
-                    <span class="ico">&#x21C5;</span>
+            <div class="brand">
+                <div class="brandmark">
+                    <img id="brandBadge" alt="Unbearables clan badge" hidden>
+                    <span class="brand-fallback">U</span>
+                </div>
+
+                <div class="brand-copy">
+                    <span class="brand-label" id="brandClanName">
+                        UNBEARABLES
+                    </span>
+
+                    <span class="brand-meta" id="brandClanTag">
+                        CLASH LEDGER &middot; #2PYYVR0PP
+                    </span>
+                </div>
+            </div>
+
+            <div class="eyebrow">CLAN WORKSPACE</div>
+
+            <nav class="nav" aria-label="Dashboard pages">
+
+                <a href="/" data-route="/" class="active" aria-current="page">
+                    <span class="ico" aria-hidden="true">&#x25C6;</span>
+                    <span class="nav-label">Overview</span>
+                </a>
+
+                <a href="/wars" data-route="/wars">
+                    <span class="ico" aria-hidden="true">&#x2694;</span>
+                    <span class="nav-label">Clan war</span>
+                </a>
+
+                <a href="/cwl" data-route="/cwl">
+                    <span class="ico" aria-hidden="true">&#x2726;</span>
+                    <span class="nav-label">CWL</span>
+                </a>
+
+                <a href="/donations" data-route="/donations">
+                    <span class="ico" aria-hidden="true">&#x21C5;</span>
                     <span class="nav-label">Donations</span>
-                </button><button data-target="membersPanel"><span class="ico">&#x2659;</span><span class="nav-label">Members</span></button>
-            </nav><div class="clan-card"><div class="clan-top"><div class="shield"><img id="clanBadge" alt="Clan badge" hidden></div><div><div class="clan-name" id="clanName">Loading clan&hellip;</div><div class="clan-tag" id="clanTag">#2PYYVR0PP</div></div></div><div class="online" id="memberCount">Connecting to official API</div></div>
+                </a>
+
+                <a href="/members" data-route="/members">
+                    <span class="ico" aria-hidden="true">&#x2659;</span>
+                    <span class="nav-label">Members</span>
+                </a>
+
+            </nav>
+
+            <div class="clan-card">
+                <div class="clan-top">
+                    <div class="shield">
+                        <img id="clanBadge" alt="Clan badge" hidden>
+                    </div>
+
+                    <div>
+                        <div class="clan-name" id="clanName">
+                            Loading clan&hellip;
+                        </div>
+
+                        <div class="clan-tag" id="clanTag">
+                            #2PYYVR0PP
+                        </div>
+                    </div>
+                </div>
+
+                <div class="online" id="memberCount">
+                    Connecting to official API
+                </div>
+            </div>
         </aside>
+
+        <!-- Main dashboard -->
+
         <main class="main">
-            <div class="topline"><div class="crumb">Clan workspace <span style="color:#657087">/</span> <b id="crumb">Overview</b></div><div class="actions"><select class="select" id="timeRange" aria-label="Performance time range"><option value="7d">Last 7 days</option><option value="30d">Last 30 days</option><option value="90d">Last 90 days</option><option value="ytd" selected>This year</option><option value="all">All tracked</option><option value="custom">Custom range</option></select><div class="avatar">C</div></div></div><div class="custom-dates" id="customDates" hidden><label>From <input type="date" id="dateFrom"></label><label>To <input type="date" id="dateTo"></label></div>
-            <div class="heading"><div><h1>Clan dashboard</h1><p id="subtitle">Live clan profile, war data, CWL standings, donations, and members.</p></div></div>
-            <div class="statusbar"><span id="apiStatus" class="status bad">Connecting to the Clash API&hellip;</span><span id="refreshStamp">Waiting for first refresh</span></div>
+
+            <!-- Shared page controls -->
+
+            <div class="topline">
+                <div class="crumb">
+                    Clan workspace
+                    <span style="color:#657087">/</span>
+                    <b id="crumb">Overview</b>
+                </div>
+
+                <div class="actions">
+                    <select class="select"
+                            id="timeRange"
+                            aria-label="Performance time range">
+
+                        <option value="7d">Last 7 days</option>
+                        <option value="30d">Last 30 days</option>
+                        <option value="90d">Last 90 days</option>
+                        <option value="ytd" selected>This year</option>
+                        <option value="all">All tracked</option>
+                        <option value="custom">Custom range</option>
+
+                    </select>
+
+                    <div class="avatar">C</div>
+                </div>
+            </div>
+
+            <div class="custom-dates" id="customDates" hidden>
+                <label>
+                    From
+                    <input type="date" id="dateFrom">
+                </label>
+
+                <label>
+                    To
+                    <input type="date" id="dateTo">
+                </label>
+            </div>
+
+            <div class="heading">
+                <div>
+                    <h1 id="pageTitle" tabindex="-1">
+                        Clan dashboard
+                    </h1>
+
+                    <p id="subtitle">
+                        Live clan profile, war data, CWL standings,
+                        donations, and members.
+                    </p>
+                </div>
+            </div>
+
+            <div class="statusbar">
+                <span id="apiStatus" class="status bad">
+                    Connecting to the Clash API&hellip;
+                </span>
+
+                <span id="refreshStamp">
+                    Waiting for first refresh
+                </span>
+            </div>
+
+            <!-- CSV export -->
+
             <div class="export-toolbar">
                 <label for="exportType">Export data</label>
 
                 <select class="select" id="exportType">
-                    <option value="members">Members (current roster)</option>
-                    <option value="donations">Donation totals</option>
-                    <option value="wars">War history</option>
+                    <option value="members">
+                        Members (current roster)
+                    </option>
+
+                    <option value="donations">
+                        Donation totals
+                    </option>
+
+                    <option value="wars">
+                        War history
+                    </option>
                 </select>
 
                 <button type="button"
@@ -41,30 +183,446 @@
 
                 <span id="exportStatus" role="status"></span>
             </div>
-            <section class="overview" id="overview"><div class="card"><div class="stat-label">Members</div><div class="stat" id="statMembers">&mdash;</div><div class="sub" id="statMembersSub">Official clan profile</div></div><div class="card"><div class="stat-label">Troops donated</div><div class="stat" id="statDonated">&mdash;</div><div class="sub" id="statDonatedSub">Member totals from the API</div></div><div class="card"><div class="stat-label">Current war stars</div><div class="stat" id="statStars">&mdash;</div><div class="sub" id="statStarsSub">Waiting for war data</div></div><div class="card"><div class="stat-label">Attacks used</div><div class="stat" id="statAttacks">&mdash;</div><div class="sub" id="statAttacksSub">Waiting for war data</div></div></section>
-            <section class="card donation-analytics" id="donationAnalytics"><div class="section-head"><div><h2>Donations over time</h2><span class="tiny" id="donationHistoryNote">Tracking will begin with the first server snapshot.</span></div><span class="range-total" id="rangeDonated">&mdash; donated</span></div><div class="range-summary"><div><strong id="rangeReceived">&mdash;</strong><span>received</span></div><div><strong id="rangeDays">&mdash;</strong><span>days tracked</span></div><div><strong id="rangeStartLabel">&mdash;</strong><span>history starts</span></div></div><div class="donation-chart" id="donationChart"><div class="empty">Donation history builds automatically as the server polls your clan.</div></div><div class="table-wrap" style="margin-top:12px"><table class="table"><thead><tr><th>Donation leaderboard</th><th class="num">Donated</th><th class="num">Received</th></tr></thead><tbody id="donationRankRows"><tr><td colspan="3" class="empty-cell">Waiting for donation history.</td></tr></tbody></table></div></section>
+
+            <!-- Overview page -->
+
+            <section class="overview"
+                     id="overview"
+                     data-page="overview">
+
+                <div class="card">
+                    <div class="stat-label">Members</div>
+                    <div class="stat" id="statMembers">&mdash;</div>
+
+                    <div class="sub" id="statMembersSub">
+                        Official clan profile
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="stat-label">Troops donated</div>
+                    <div class="stat" id="statDonated">&mdash;</div>
+
+                    <div class="sub" id="statDonatedSub">
+                        Member totals from the API
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="stat-label">Current war stars</div>
+                    <div class="stat" id="statStars">&mdash;</div>
+
+                    <div class="sub" id="statStarsSub">
+                        Waiting for war data
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="stat-label">Attacks used</div>
+                    <div class="stat" id="statAttacks">&mdash;</div>
+
+                    <div class="sub" id="statAttacksSub">
+                        Waiting for war data
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Donations page -->
+
+            <section class="card donation-analytics"
+                     id="donationAnalytics"
+                     data-page="donations"
+                     hidden>
+
+                <div class="section-head">
+                    <div>
+                        <h2>Donations over time</h2>
+
+                        <span class="tiny" id="donationHistoryNote">
+                            Tracking will begin with the first server snapshot.
+                        </span>
+                    </div>
+
+                    <span class="range-total" id="rangeDonated">
+                        &mdash; donated
+                    </span>
+                </div>
+
+                <div class="range-summary">
+                    <div>
+                        <strong id="rangeReceived">&mdash;</strong>
+                        <span>received</span>
+                    </div>
+
+                    <div>
+                        <strong id="rangeDays">&mdash;</strong>
+                        <span>days tracked</span>
+                    </div>
+
+                    <div>
+                        <strong id="rangeStartLabel">&mdash;</strong>
+                        <span>history starts</span>
+                    </div>
+                </div>
+
+                <div class="donation-chart" id="donationChart">
+                    <div class="empty">
+                        Donation history builds automatically
+                        as the server polls your clan.
+                    </div>
+                </div>
+
+                <div class="table-wrap" style="margin-top:12px">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Donation leaderboard</th>
+                                <th class="num">Donated</th>
+                                <th class="num">Received</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="donationRankRows">
+                            <tr>
+                                <td colspan="3" class="empty-cell">
+                                    Waiting for donation history.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </section>
+
             <div class="content-grid">
                 <div>
-                    <section class="card war-card" id="warPanel"><div class="war-banner"><div><div class="war-title" id="warTitle">Current clan war</div><div class="war-meta" id="warMeta">Waiting for official war data</div></div><span class="pill" id="warState">LOADING</span></div><div id="warBody"><div class="empty">Loading current war information&hellip;</div></div></section>
-                    <section class="card" style="margin-top:15px" id="lastWarPanel"><div class="section-head"><div><h2>Most recent war &middot; member participation</h2><span class="tiny" id="lastWarCaption">Attacks and stars recorded by the tracker</span></div><span class="tiny" id="lastWarDate"></span></div><div id="lastWarBody"><div class="empty">No completed war details recorded yet.</div></div></section>
-                    <section class="card" style="margin-top:15px" id="cwlPanel"><div class="section-head"><div class="cwl-head"><div><h2>Clan War League</h2><div class="cwl-sub" id="cwlSub">Standings come from the current CWL group.</div></div></div><span class="league" id="leagueBadge">CWL</span></div><div id="cwlBody"><div class="empty">Loading CWL data&hellip;</div></div><div class="section-head" style="margin-top:20px"><h2>Previous CWL seasons</h2><span class="tiny" id="cwlHistoryNote">Saved automatically while the server is running</span></div><div class="table-wrap"><table class="table"><thead><tr><th>Season</th><th class="num">Wars</th><th class="num">Record</th><th class="num">Stars</th><th class="num">Attacks</th></tr></thead><tbody id="cwlHistoryRows"><tr><td colspan="5" class="empty-cell">No CWL results have been archived yet.</td></tr></tbody></table></div></section>
-                    <section class="card" style="margin-top:15px"><div class="section-head"><h2>War activity</h2><span class="tiny" id="warActivityTag">OFFICIAL WAR DATA</span></div><div id="warActivity"><div class="empty">Loading war activity&hellip;</div></div></section>
-                    <section class="card" style="margin-top:15px" id="leaderPanel"><div class="section-head"><h2 id="leaderTitle">Top donors</h2><div style="display:flex;gap:9px;align-items:center"><select class="filter" id="leaderMetric" aria-label="Leaderboard metric"><option value="donated">Donations</option><option value="stars">War stars</option><option value="attacks">Attacks</option></select><span class="tiny" id="leaderNote">SELECT A TIME RANGE</span></div></div><div class="table-wrap"><table class="table"><thead><tr><th>#</th><th>Player</th><th class="num">Stars</th><th class="num">Attacks</th><th class="num">Donated</th></tr></thead><tbody id="leaderRows"><tr><td colspan="5" class="empty-cell">Loading members&hellip;</td></tr></tbody></table></div></section>
-                </div><div>
-                    <section class="card" style="margin-top:15px"><div class="section-head"><h2>Clan profile</h2><span class="tiny" id="profileUpdated">LIVE</span></div><div class="cwl-metrics"><div class="cwl-metric"><strong id="profileLevel">&mdash;</strong><span>Clan level</span></div><div class="cwl-metric"><strong id="profileWins">&mdash;</strong><span>War wins all time</span></div><div class="cwl-metric"><strong id="profileLeague">&mdash;</strong><span>War league</span></div></div><div class="sub" id="profileNote" style="margin-top:12px">Details from the official clan profile.</div></section>
+
+                    <!-- Clan wars page -->
+
+                    <section class="card war-card"
+                             id="warPanel"
+                             data-page="wars"
+                             hidden>
+
+                        <div class="war-banner">
+                            <div>
+                                <div class="war-title" id="warTitle">
+                                    Current clan war
+                                </div>
+
+                                <div class="war-meta" id="warMeta">
+                                    Waiting for official war data
+                                </div>
+                            </div>
+
+                            <span class="pill" id="warState">
+                                LOADING
+                            </span>
+                        </div>
+
+                        <div id="warBody">
+                            <div class="empty">
+                                Loading current war information&hellip;
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="card"
+                             style="margin-top:15px"
+                             id="lastWarPanel"
+                             data-page="wars"
+                             hidden>
+
+                        <div class="section-head">
+                            <div>
+                                <h2>
+                                    Most recent war &middot; member participation
+                                </h2>
+
+                                <span class="tiny" id="lastWarCaption">
+                                    Attacks and stars recorded by the tracker
+                                </span>
+                            </div>
+
+                            <span class="tiny" id="lastWarDate"></span>
+                        </div>
+
+                        <div id="lastWarBody">
+                            <div class="empty">
+                                No completed war details recorded yet.
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Clan War League page -->
+
+                    <section class="card"
+                             style="margin-top:15px"
+                             id="cwlPanel"
+                             data-page="cwl"
+                             hidden>
+
+                        <div class="section-head">
+                            <div class="cwl-head">
+                                <div>
+                                    <h2>Clan War League</h2>
+
+                                    <div class="cwl-sub" id="cwlSub">
+                                        Standings come from the current CWL group.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span class="league" id="leagueBadge">
+                                CWL
+                            </span>
+                        </div>
+
+                        <div id="cwlBody">
+                            <div class="empty">
+                                Loading CWL data&hellip;
+                            </div>
+                        </div>
+
+                        <div class="section-head"
+                             style="margin-top:20px">
+
+                            <h2>Previous CWL seasons</h2>
+
+                            <span class="tiny" id="cwlHistoryNote">
+                                Saved automatically while the server is running
+                            </span>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Season</th>
+                                        <th class="num">Wars</th>
+                                        <th class="num">Record</th>
+                                        <th class="num">Stars</th>
+                                        <th class="num">Attacks</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="cwlHistoryRows">
+                                    <tr>
+                                        <td colspan="5" class="empty-cell">
+                                            No CWL results have been archived yet.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </section>
+
+                    <!-- Historical war activity -->
+
+                    <section class="card"
+                             style="margin-top:15px"
+                             data-page="wars"
+                             hidden>
+
+                        <div class="section-head">
+                            <h2>War activity</h2>
+
+                            <span class="tiny" id="warActivityTag">
+                                OFFICIAL WAR DATA
+                            </span>
+                        </div>
+
+                        <div id="warActivity">
+                            <div class="empty">
+                                Loading war activity&hellip;
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Overview leaderboard -->
+
+                    <section class="card"
+                             style="margin-top:15px"
+                             id="leaderPanel"
+                             data-page="overview">
+
+                        <div class="section-head">
+                            <h2 id="leaderTitle">Top donors</h2>
+
+                            <div style="display:flex;gap:9px;align-items:center">
+
+                                <select class="filter"
+                                        id="leaderMetric"
+                                        aria-label="Leaderboard metric">
+
+                                    <option value="donated">
+                                        Donations
+                                    </option>
+
+                                    <option value="stars">
+                                        War stars
+                                    </option>
+
+                                    <option value="attacks">
+                                        Attacks
+                                    </option>
+                                </select>
+
+                                <span class="tiny" id="leaderNote">
+                                    SELECT A TIME RANGE
+                                </span>
+
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Player</th>
+                                        <th class="num">Stars</th>
+                                        <th class="num">Attacks</th>
+                                        <th class="num">Donated</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="leaderRows">
+                                    <tr>
+                                        <td colspan="5" class="empty-cell">
+                                            Loading members&hellip;
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </section>
+
+                </div>
+
+                <div>
+
+                    <!-- Overview clan profile -->
+
+                    <section class="card"
+                             style="margin-top:15px"
+                             data-page="overview">
+
+                        <div class="section-head">
+                            <h2>Clan profile</h2>
+
+                            <span class="tiny" id="profileUpdated">
+                                LIVE
+                            </span>
+                        </div>
+
+                        <div class="cwl-metrics">
+
+                            <div class="cwl-metric">
+                                <strong id="profileLevel">&mdash;</strong>
+                                <span>Clan level</span>
+                            </div>
+
+                            <div class="cwl-metric">
+                                <strong id="profileWins">&mdash;</strong>
+                                <span>War wins all time</span>
+                            </div>
+
+                            <div class="cwl-metric">
+                                <strong id="profileLeague">&mdash;</strong>
+                                <span>War league</span>
+                            </div>
+
+                        </div>
+
+                        <div class="sub"
+                             id="profileNote"
+                             style="margin-top:12px">
+
+                            Details from the official clan profile.
+                        </div>
+
+                    </section>
+
                 </div>
             </div>
-            <section class="card members-card" id="membersPanel"><div class="section-head"><div><h2>All clan members</h2><span class="tiny" id="membersCaption">Full roster from the official clan profile</span></div><div class="member-tools"><input class="search" id="memberSearch" placeholder="Search members&hellip;" aria-label="Search members"><span class="tiny" id="shownCount"></span></div></div><div class="table-wrap"><table class="table"><thead><tr><th>Player</th><th>Role</th><th class="num">Town Hall</th><th class="num">Donated</th><th class="num">Received</th><th class="num">Stars</th><th class="num">Attacks</th></tr></thead><tbody id="memberRows"><tr><td colspan="7" class="empty-cell">Loading members&hellip;</td></tr></tbody></table></div></section>
-            <div class="page-note" id="footerNote">Clash Ledger &middot; Connected to clan #2PYYVR0PP</div>
+
+            <!-- Members page -->
+
+            <section class="card members-card"
+                     id="membersPanel"
+                     data-page="members"
+                     hidden>
+
+                <div class="section-head">
+                    <div>
+                        <h2>All clan members</h2>
+
+                        <span class="tiny" id="membersCaption">
+                            Full roster from the official clan profile
+                        </span>
+                    </div>
+
+                    <div class="member-tools">
+                        <input class="search"
+                               id="memberSearch"
+                               placeholder="Search members&hellip;"
+                               aria-label="Search members">
+
+                        <span class="tiny" id="shownCount"></span>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Player</th>
+                                <th>Role</th>
+                                <th class="num">Town Hall</th>
+                                <th class="num">Donated</th>
+                                <th class="num">Received</th>
+                                <th class="num">Stars</th>
+                                <th class="num">Attacks</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="memberRows">
+                            <tr>
+                                <td colspan="7" class="empty-cell">
+                                    Loading members&hellip;
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </section>
+
+            <!-- Shared footer -->
+
+            <div class="page-note" id="footerNote">
+                Clash Ledger &middot; Connected to clan #2PYYVR0PP
+            </div>
+
         </main>
     </div>
+
+    <!-- Individual player profile dialog -->
+
     <dialog id="playerProfileDialog"
             class="player-profile-dialog"
             aria-labelledby="playerProfileTitle">
 
         <div class="player-profile-heading">
             <div>
-                <h2 id="playerProfileTitle">Player profile</h2>
+                <h2 id="playerProfileTitle">
+                    Player profile
+                </h2>
+
                 <p id="playerProfileMeta" class="profile-note"></p>
             </div>
 
@@ -76,9 +634,13 @@
         </div>
 
         <div id="playerProfileContent"></div>
+
     </dialog>
 
-    <script src="/app.js?v=20261121-9"></script>
+    <!-- Application scripts -->
+
+    <script src="/router.js"></script>
+    <script src="/app.js?v=20261121-10"></script>
+
 </body>
 </html>
-
