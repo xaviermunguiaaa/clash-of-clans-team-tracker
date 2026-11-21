@@ -23,6 +23,24 @@
             <div class="topline"><div class="crumb">Clan workspace <span style="color:#657087">/</span> <b id="crumb">Overview</b></div><div class="actions"><select class="select" id="timeRange" aria-label="Performance time range"><option value="7d">Last 7 days</option><option value="30d">Last 30 days</option><option value="90d">Last 90 days</option><option value="ytd" selected>This year</option><option value="all">All tracked</option><option value="custom">Custom range</option></select><div class="avatar">C</div></div></div><div class="custom-dates" id="customDates" hidden><label>From <input type="date" id="dateFrom"></label><label>To <input type="date" id="dateTo"></label></div>
             <div class="heading"><div><h1>Clan dashboard</h1><p id="subtitle">Live clan profile, war data, CWL standings, donations, and members.</p></div></div>
             <div class="statusbar"><span id="apiStatus" class="status bad">Connecting to the Clash API&hellip;</span><span id="refreshStamp">Waiting for first refresh</span></div>
+            <div class="export-toolbar">
+                <label for="exportType">Export data</label>
+
+                <select class="select" id="exportType">
+                    <option value="members">Members (current roster)</option>
+                    <option value="donations">Donation totals</option>
+                    <option value="wars">War history</option>
+                </select>
+
+                <button type="button"
+                        class="export-button"
+                        id="exportCsv"
+                        disabled>
+                    Download CSV
+                </button>
+
+                <span id="exportStatus" role="status"></span>
+            </div>
             <section class="overview" id="overview"><div class="card"><div class="stat-label">Members</div><div class="stat" id="statMembers">&mdash;</div><div class="sub" id="statMembersSub">Official clan profile</div></div><div class="card"><div class="stat-label">Troops donated</div><div class="stat" id="statDonated">&mdash;</div><div class="sub" id="statDonatedSub">Member totals from the API</div></div><div class="card"><div class="stat-label">Current war stars</div><div class="stat" id="statStars">&mdash;</div><div class="sub" id="statStarsSub">Waiting for war data</div></div><div class="card"><div class="stat-label">Attacks used</div><div class="stat" id="statAttacks">&mdash;</div><div class="sub" id="statAttacksSub">Waiting for war data</div></div></section>
             <section class="card donation-analytics" id="donationAnalytics"><div class="section-head"><div><h2>Donations over time</h2><span class="tiny" id="donationHistoryNote">Tracking will begin with the first server snapshot.</span></div><span class="range-total" id="rangeDonated">&mdash; donated</span></div><div class="range-summary"><div><strong id="rangeReceived">&mdash;</strong><span>received</span></div><div><strong id="rangeDays">&mdash;</strong><span>days tracked</span></div><div><strong id="rangeStartLabel">&mdash;</strong><span>history starts</span></div></div><div class="donation-chart" id="donationChart"><div class="empty">Donation history builds automatically as the server polls your clan.</div></div><div class="table-wrap" style="margin-top:12px"><table class="table"><thead><tr><th>Donation leaderboard</th><th class="num">Donated</th><th class="num">Received</th></tr></thead><tbody id="donationRankRows"><tr><td colspan="3" class="empty-cell">Waiting for donation history.</td></tr></tbody></table></div></section>
             <div class="content-grid">
@@ -60,7 +78,7 @@
         <div id="playerProfileContent"></div>
     </dialog>
 
-    <script src="/app.js?v=20261121-8"></script>
+    <script src="/app.js?v=20261121-9"></script>
 </body>
 </html>
 
