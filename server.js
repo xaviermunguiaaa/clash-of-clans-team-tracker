@@ -193,19 +193,43 @@ const server = http.createServer(async (req, res) => {
             error: 'Manual donation logging is no longer supported.'
         });
     }
-  const relative = decodeURIComponent(url.pathname === '/' ? 'index.html' : url.pathname.slice(1));
-  const resolved = path.resolve(root, relative);
-  if (!resolved.startsWith(root + path.sep)) { res.writeHead(403); return res.end('Forbidden'); }
-  fs.readFile(resolved, (error, data) => {
-    if (error) { res.writeHead(404); return res.end('Not found'); }
-    const type = resolved.endsWith('.html') ? 'text/html; charset=utf-8'
-      : resolved.endsWith('.js') ? 'text/javascript; charset=utf-8'
-      : resolved.endsWith('.css') ? 'text/css; charset=utf-8'
-      : 'application/octet-stream';
-    res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-store, no-cache, must-revalidate' }); res.end(data);
-  });
-});
+    // Only expose files required by the public dashboard.
+    const publicFiles = new Map([
+        ['/', 'index.html'],
+        ['/index.html', 'index.html'],
+        ['/app.js', 'app.js'],
+    ]);
 
+    const file = publicFiles.get(url.pathname);
+
+    if (!file) {
+        res.writeHead(404);
+        return res.end('Not found');
+    }
+
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+        res.writeHead(405, { Allow: 'GET, HEAD' });
+        return res.end('Method not allowed');
+    }
+
+    fs.readFile(path.join(root, file), (error, data) => {
+        if (error) {
+            res.writeHead(404);
+            return res.end('Not found');
+        }
+
+        const type = file.endsWith('.html')
+            ? 'text/html; charset=utf-8'
+            : 'text/javascript; charset=utf-8';
+
+        res.writeHead(200, {
+            'Content-Type': type,
+            'Cache-Control': 'no-store, no-cache, must-revalidate',
+        });
+
+        return res.end(req.method === 'HEAD' ? undefined : data);
+    });
+});
 server.listen(PORT, () => {
   console.log(`Clash Ledger listening on port ${PORT} for ${CLAN_TAG}; polling every ${POLL_MS / 1000}s`);
   refresh();
