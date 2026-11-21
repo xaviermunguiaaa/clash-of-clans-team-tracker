@@ -59,6 +59,18 @@ CSV files are generated in the browser and do not modify
 stored records. They are compatible with Excel and other
 spreadsheet applications.
 
+## API reliability
+
+Temporary network errors, timeouts, and server failures use
+up to three total attempts per request, with increasing delays.
+
+Rate-limit responses respect the API's retry cooldown.
+Authorization and missing-resource errors are not retried.
+
+The dashboard displays live, partial, or cached data depending
+on API availability. Failed refreshes do not overwrite the
+last successfully saved clan snapshot.
+
 ## Requirements before live updates work
 
 - A host that stays online and has a **static public outbound IPv4 address**. Supercell binds API keys to an allowed IP, so a typical serverless host with changing egress IPs will not work reliably.

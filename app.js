@@ -249,8 +249,78 @@ function renderAll() {
         renderPlayerProfile();
     }
 }
-function applySnapshot(data) { state.snapshot = data; state.history = data.history || {}; const status = document.getElementById('apiStatus'); status.textContent = data.lastError ? 'Cached data · API refresh retrying' : 'Live clan data'; status.className = data.lastError ? 'status bad' : 'status'; document.getElementById('refreshStamp').textContent = `Last server refresh ${data.updatedAt ? new Date(data.updatedAt).toLocaleString() : 'unknown'} · Dashboard checks every minute`; document.getElementById('footerNote').textContent = `Clash Ledger · ${data.clan.name} · ${data.clan.tag}`; renderAll() }
-async function refreshClan() { try { const response = await fetch('/api/clan', { cache: 'no-store' }), data = await response.json(); if (!response.ok) throw new Error(data.error || 'Clan API unavailable'); applySnapshot(data) } catch (error) { const status = document.getElementById('apiStatus'); status.textContent = `Connection failed: ${error.message}`; status.className = 'status bad'; document.getElementById('refreshStamp').textContent = 'Open this page on the same computer as the running server.' } }
+function applySnapshot(data) {
+    state.snapshot = data;
+    state.history = data.history || {};
+
+    const status = document.getElementById('apiStatus');
+
+    if (data.dataStatus === 'cached' || data.lastError) {
+        status.textContent = 'Cached data · waiting for API refresh';
+        status.className = 'status bad';
+
+    } else if (data.dataStatus === 'partial') {
+        status.textContent = 'Partial data · some war data unavailable';
+        status.className = 'status bad';
+
+    } else {
+        status.textContent = 'Live clan data';
+        status.className = 'status';
+    }
+
+    status.title = data.lastError || (
+        data.dataStatus === 'partial'
+            ? 'Some war endpoints are unavailable.'
+            : ''
+    );
+
+    document.getElementById('refreshStamp').textContent =
+        `Last server refresh ${data.updatedAt
+            ? new Date(data.updatedAt).toLocaleString()
+            : 'unknown'
+        } · Dashboard checks every minute`;
+
+    document.getElementById('footerNote').textContent =
+        `Clash Ledger · ${data.clan.name} · ${data.clan.tag}`;
+
+    renderAll();
+}
+
+async function refreshClan() {
+    try {
+        const response = await fetch('/api/clan', {
+            cache: 'no-store',
+            signal: AbortSignal.timeout(15_000)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || 'Clan API unavailable'
+            );
+        }
+
+        applySnapshot(data);
+
+    } catch (error) {
+        const status = document.getElementById('apiStatus');
+
+        status.className = 'status bad';
+
+        if (state.snapshot) {
+            status.textContent = 'Cached data · server unavailable';
+            status.title = error.message;
+
+        } else {
+            status.textContent =
+                `Connection failed: ${error.message}`;
+
+            document.getElementById('refreshStamp').textContent =
+                'Waiting for the server to provide clan data.';
+        }
+    }
+}
 function refreshRange() { const custom = document.getElementById('timeRange').value === 'custom'; document.getElementById('customDates').hidden = !custom; renderAll() }
 let selectedPlayerTag = null;
 

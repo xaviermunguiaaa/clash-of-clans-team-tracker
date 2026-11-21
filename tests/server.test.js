@@ -47,6 +47,7 @@ before(async () => {
     for (const file of [
         'server.js',
         'database.js',
+        'coc-api.js',
         'index.html',
         'app.js',
         'router.js',
@@ -158,6 +159,7 @@ test('Clan API returns cached data', async () => {
 
     assert.equal(data.clan.name, 'Test Clan');
     assert.equal(data.clan.memberList[0].donations, 100);
+    assert.equal(data.dataStatus, 'cached');
 });
 
 test('Manual donation submissions are rejected', async () => {
@@ -186,6 +188,7 @@ test('Rejected donations do not change cached statistics', async () => {
 test('Backend and repository files are blocked', async () => {
     for (const route of [
         '/server.js',
+        '/coc-api.js',
         '/database.js',
         '/package.json',
         '/.git/config'
