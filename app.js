@@ -243,6 +243,8 @@ function renderAll() {
     renderCwl();
     renderActivity();
 
+    updateExportControls();
+
     if (document.getElementById('playerProfileDialog').open) {
         renderPlayerProfile();
     }
@@ -490,6 +492,263 @@ for (const id of ['memberRows', 'leaderRows']) {
         }
     });
 }
+function csvCell(value) {
+    let text = String(value ?? '');
+
+    // Prevent spreadsheet formula injection.
+    if (typeof value === 'string' &&
+        (/^[\s\uFEFF]*[=+\-@＝＋－＠]/.test(text) ||
+            /^[\t\r\n]/.test(text))) {
+        text = "'" + text;
+    }
+
+    return '"' + text.replace(/"/g, '""') + '"';
+}
+
+function toCsv(rows) {
+    return rows
+        .map(row => row.map(csvCell).join(','))
+        .join('\r\n') + '\r\n';
+}
+
+function donationExportSource(summary, tag) {
+    if (!summary.baseline) {
+        return 'Current API totals (not date-filtered)';
+    }
+
+    if (summary.baseUsed &&
+        (summary.baseline.players || []).some(p => p.tag === tag)) {
+        return 'Starting API balance + recorded changes';
+    }
+
+    return 'Recorded changes';
+}
+
+function exportWarResult(war) {
+    if (war.state !== 'warEnded' &&
+        war.source !== 'warLog') {
+        return 'In progress';
+    }
+
+    const mine = war.mine;
+    const other = war.other;
+
+    if (mine?.stars == null || other?.stars == null) {
+        return '';
+    }
+
+    if (mine.stars > other.stars) return 'Win';
+    if (mine.stars < other.stars) return 'Loss';
+
+    if (mine.destructionPercentage == null ||
+        other.destructionPercentage == null) {
+        return '';
+    }
+
+    if (mine.destructionPercentage > other.destructionPercentage) {
+        return 'Win';
+    }
+
+    if (mine.destructionPercentage < other.destructionPercentage) {
+        return 'Loss';
+    }
+
+    return 'Tie';
+}
+
+function buildCsvRows(kind) {
+    const range = bounds();
+
+    const dates = [
+        range.start || '',
+        range.end || ''
+    ];
+
+    const dateHeaders = [
+        'Range start (UTC)',
+        'Range end (UTC)'
+    ];
+
+    // Export current clan members.
+    if (kind === 'members') {
+        const members = state.snapshot?.clan?.memberList || [];
+        const summary = donationSummary();
+
+        const donations = new Map(
+            summary.list.map(p => [p.tag, p])
+        );
+
+        const stats = statsForWars(filteredWars());
+
+        const roles = {
+            leader: 'Leader',
+            coLeader: 'Co-leader',
+            admin: 'Elder',
+            member: 'Member'
+        };
+
+        return [
+            [
+                'Player tag',
+                'Player',
+                'Role',
+                'Town Hall',
+                'Donated',
+                'Received',
+                'Donation source',
+                'War stars',
+                'Attacks',
+                ...dateHeaders
+            ],
+
+            ...members.map(m => {
+                const donation = donations.get(m.tag);
+                const war = stats.map.get(m.tag);
+
+                return [
+                    m.tag,
+                    m.name,
+                    roles[m.role] || m.role || 'Member',
+                    m.townHallLevel ?? '',
+                    donation?.donated ?? 0,
+                    donation?.received ?? 0,
+                    donationExportSource(summary, m.tag),
+                    war?.stars ?? '',
+                    war?.attacks ?? '',
+                    ...dates
+                ];
+            })
+        ];
+    }
+
+    // Export historical donation totals.
+    if (kind === 'donations') {
+        const summary = donationSummary();
+
+        return [
+            [
+                'Player tag',
+                'Player',
+                'Donated',
+                'Received',
+                'Donation source',
+                ...dateHeaders
+            ],
+
+            ...summary.list.map(p => [
+                p.tag,
+                p.name,
+                p.donated,
+                p.received,
+                donationExportSource(summary, p.tag),
+                ...dates
+            ])
+        ];
+    }
+
+    // Export regular war and CWL history.
+    if (kind === 'wars') {
+        const warType =
+            document.getElementById('warType')?.value || 'all';
+
+        return [
+            [
+                'Date (UTC)',
+                'Type',
+                'Opponent',
+                'Opponent tag',
+                'Result',
+                'Clan stars',
+                'Opponent stars',
+                'Clan destruction (%)',
+                'Opponent destruction (%)',
+                'Recorded attacks',
+                ...dateHeaders
+            ],
+
+            ...filteredWars(warType).map(w => {
+                const members = w.mine?.members || [];
+
+                const attacks = members.reduce(
+                    (sum, m) => sum + (m.attacks || []).length,
+                    0
+                );
+
+                return [
+                    dayKey(warDate(w)),
+                    w.kind === 'cwl' ? 'CWL' : 'Regular',
+                    w.other?.name || '',
+                    w.other?.tag || '',
+                    exportWarResult(w),
+                    w.mine?.stars ?? '',
+                    w.other?.stars ?? '',
+                    w.mine?.destructionPercentage ?? '',
+                    w.other?.destructionPercentage ?? '',
+                    members.length ? attacks : '',
+                    ...dates
+                ];
+            })
+        ];
+    }
+
+    return [];
+}
+
+function updateExportControls() {
+    document.getElementById('exportCsv').disabled =
+        !state.snapshot?.clan;
+}
+
+function downloadCsv() {
+    const status = document.getElementById('exportStatus');
+    const kind = document.getElementById('exportType').value;
+    const range = bounds();
+
+    if (!state.snapshot?.clan) {
+        status.textContent = 'Wait for the clan data to load.';
+        return;
+    }
+
+    if (range.start && range.end && range.start > range.end) {
+        status.textContent = 'Choose a valid date range.';
+        return;
+    }
+
+    const rows = buildCsvRows(kind);
+
+    if (rows.length <= 1) {
+        status.textContent = 'No data available for this export.';
+        return;
+    }
+
+    // UTF-8 BOM improves compatibility with Excel.
+    const blob = new Blob(
+        ['\uFEFF', toCsv(rows)],
+        { type: 'text/csv;charset=utf-8' }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+
+    link.download = 'clash-ledger-' + kind + '-' +
+        (range.start || 'all') + '-to-' + range.end + '.csv';
+
+    document.body.appendChild(link);
+
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    status.textContent =
+        'Exported ' + (rows.length - 1) + ' records.';
+}
+
+document.getElementById('exportCsv')
+    .addEventListener('click', downloadCsv);
+
 document.getElementById('memberSearch').addEventListener('input', renderMembers);
 document.getElementById('leaderMetric').addEventListener('change', renderLeaderboard);
 document.getElementById('timeRange').addEventListener('change', refreshRange);
